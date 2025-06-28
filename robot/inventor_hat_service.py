@@ -28,12 +28,14 @@ def stop_motors(client=None, userdata=None, msg=None):
 def on_connect(client, userdata, flags, rc):
     print(f"Connected with result code {rc}")
     client.subscribe("motors/#")
+    client.subscribe("leds/#")
     client.subscribe("all/#")
 
 atexit.register(stop_motors)
 
 mqtt_username = "robot"
 mqtt_password = "robot"
+
 client = mqtt.Client()
 client.username_pw_set(mqtt_username, mqtt_password)
 client.on_connect = on_connect
