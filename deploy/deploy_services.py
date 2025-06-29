@@ -39,7 +39,7 @@ code = files.put(
 
 deploy_service("inventor_hat_service","robot/inventor_hat_service.py", 
                True, common.changed or code.changed)
-
+'''
 code = files.put(
     name="Update launcher code",
     src="robot/launcher_service.py",
@@ -75,3 +75,4 @@ code = files.sync(
 
 deploy_service("web_server", "-m http.server --directory robot_control",
                 True, code.changed)
+'''
