@@ -53,7 +53,7 @@ code = files.put(
     dest="robot/behavior_path.py")
 deploy_service("behavior_path","robot/behavior_path.py",
                 False, common.changed or code.changed)
-
+'''
 files.directory(
     name="Create robot_control/libs",
     path="robot_control/libs"
@@ -68,11 +68,10 @@ files.download(
     src="https://unpkg.com/mqtt@5.7.0/dist/mqtt.esm.js",
     dest="robot_control/libs/mqtt.js"
 )
-'''
+
 code = files.sync(
     name="Update web server code",
     src="robot_control", dest="robot_control")
 
-deploy_service("web_server",
-               "-m http.server --directory robot_control",
+deploy_service("web_server", "-m http.server --directory robot_control",
                True, code.changed)
