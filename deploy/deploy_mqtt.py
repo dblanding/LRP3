@@ -13,9 +13,11 @@ mosquitto_packages = apt.packages(
 mqtt_username = "robot"
 mqtt_password = "robot"
 if mosquitto_packages.changed:
+    # set mosquitto password
     server.shell(
         f"mosquitto_passwd -c -b /etc/mosquitto/passwd {mqtt_username} {mqtt_password}",
         _sudo=True)
+
 if mosquitto_packages.changed:
     systemd.service(
         name="Restart/enable mosquitto",
