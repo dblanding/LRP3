@@ -23,7 +23,7 @@
                 let direction = stickData.x / 100;
                 console.log("Speed:", speed, "Direction:", direction);
                 mqttClient.publish("motors/wheels", JSON.stringify(
-                  [speed + direction, speed - direction]
+                    [speed + direction, speed - direction]
                 ));
               }
           );
