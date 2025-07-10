@@ -82,5 +82,5 @@ code = files.sync(
     name="Update web server code",
     src="robot_control", dest="robot_control")
 
-deploy_service("web_server", "-m http.server --directory robot_control",
+deploy_service("web_server", "-m http.server --directory robot_control 80",
                True, code.changed)
