@@ -64,6 +64,14 @@ deploy_service("distance_sensor_service",
                "robot/distance_sensor_service.py",
                True, common.changed or code.changed)
 
+code = files.put(
+    name="Update fixed distance avoider",
+    src="robot/fixed_distance_avoider.py",
+    dest="robot/fixed_distance_avoider.py")
+deploy_service("fixed_distance_avoider",
+               "robot/fixed_distance_avoider.py",
+               False, common.changed or code.changed)
+
 
 files.directory(
     name="Create robot_control/libs",
