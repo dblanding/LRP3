@@ -72,6 +72,13 @@ deploy_service("fixed_distance_avoider",
                "robot/fixed_distance_avoider.py",
                False, common.changed or code.changed)
 
+code = files.put(
+    name="Update smooth distance avoider",
+    src="robot/smooth_distance_avoider.py",
+    dest="robot/smooth_distance_avoider.py")
+deploy_service("smooth_distance_avoider",
+               "robot/smooth_distance_avoider.py",
+               False, common.changed or code.changed)
 
 files.directory(
     name="Create robot_control/libs",
