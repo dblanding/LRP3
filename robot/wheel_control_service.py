@@ -11,8 +11,8 @@ class WheelControlService:
     def __init__(self):
         self.left_speed = 0
         self.right_speed = 0
-        self.left_pid = PIDController(0.001, 0.001)
-        self.right_pid = PIDController(0.001, 0.001)
+        self.left_pid = PIDController(0.001, 0.01)
+        self.right_pid = PIDController(0.001, 0.01)
         self.time_stepper = TimeStepper()
         self.enabled = False
 
@@ -26,7 +26,7 @@ class WheelControlService:
         publish_json(client, "motors/wheels", [0, 0])
 
     def on_wheel_speed_mm(self, client, userdata, message):
-        self.left_speed, self.right_speed = json.loads(message.payload)
+        self.left_speed, self.right_speed = json.loads(message.payload)
 
     def on_encoders_data(self, client, userdata, message):
         encoder_data = json.loads(message.payload)
