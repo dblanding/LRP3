@@ -12,11 +12,11 @@ class RobotConfigStore:
         print(f"Setting {key} to {value}")
         self.db[key] = json.dumps(value)
         self.db.sync()
-        publish_json(client, "config/updated", data)
+        publish_json(client, "config/updated", {key: value})
 
     def on_get(self, client, userdata, message):
         data = json.loads(message.payload)
-        response = {key: self.db[key] for key in data if key in self.db}
+        response = {key: json.loads(self.db[key]) for key in data if key in self.db}
         publish_json(client, "config/updated", response)
 
     def start(self):
@@ -27,7 +27,5 @@ class RobotConfigStore:
         client.message_callback_add("config/get", self.on_get)
         client.loop_forever()
 
-
 config_store = RobotConfigStore()
 config_store.start()
-
