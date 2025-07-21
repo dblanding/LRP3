@@ -65,10 +65,14 @@ def reset_encoders(*_):
     right_encoder.zero()
 
 def update_encoders(client):
+    left_data = left_encoder.capture()
+    right_data = right_encoder.capture()
     publish_json(client, "sensors/encoders/data",
         {
-            "left_count": left_encoder.count(),
-            "right_count": right_encoder.count()
+            "left_distance": left_data.radians * wheel_radius,
+            "right_distance": right_data.radians * wheel_radius,
+            "left_mm_per_sec": left_data.radians_per_second * wheel_radius,
+            "right_mm_per_sec": right_data.radians_per_second * wheel_radius,
         }
     )
 
@@ -105,4 +109,4 @@ while True:
         client.publish("launcher/poweroff", "")
     if time.time() - last_message > 1:
         stop_motors()
-    time.sleep(0.05)
+    time.sleep(0.1)
