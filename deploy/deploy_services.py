@@ -31,6 +31,7 @@ def deploy_service(service_name, command, auto_start, changed):
             _sudo=True,
         )
 
+
 common = files.sync(
     name="Update common code",
     src="robot/common", dest="robot/common")
@@ -97,6 +98,13 @@ code = files.put(
     src="robot/imu_service.py",
     dest="robot/imu_service.py")
 deploy_service("imu_service", "robot/imu_service.py",
+                False, common.changed or code.changed)
+
+code = files.put(
+    name="Update face direction code",
+    src="robot/face_direction.py",
+    dest="robot/face_direction.py")
+deploy_service("face_direction", "robot/face_direction.py",
                 False, common.changed or code.changed)
 
 code = files.put(
