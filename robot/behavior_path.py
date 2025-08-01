@@ -14,7 +14,7 @@ class BehaviorPath:
         self.distance_pid = PIDController(0.2, 0.01)
         self.speed = 180
         self.stopping_distance = 100
-        self.wheel_distance = 0
+        self.wheel_distance = 159
         self.config_ready = False
 
     def on_encoders_data(self, client, userdata, msg):
@@ -36,7 +36,7 @@ class BehaviorPath:
             "left_is_primary": left_is_primary
         })
         client.publish("sensors/encoders/control/reset")
-        while self.left_distance !=0 and self.right_distance != 0:
+        while abs(self.left_distance) >= 8 and abs(self.right_distance) >= 8:
             time.sleep(0.01)
         time_stepper = TimeStepper()
         self.distance_pid.reset()
