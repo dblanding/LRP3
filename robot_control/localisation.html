@@ -28,6 +28,39 @@
             }
         };
 
+        const mapPlotter = {
+            id: 'mapPlotter',
+            walls: [],
+            scaledWallVertex(vertex, scales) {
+                return [
+                    scales.x.getPixelForValue(vertex[0]),
+                    scales.y.getPixelForValue(vertex[1])
+                ]
+            },
+            drawWalls(ctx, scales) {
+                ctx.save();
+                ctx.strokeStyle = 'rgba(0, 0, 255, 1)';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                let scaledVertex = this.scaledWallVertex(this.walls[0], scales);
+                ctx.moveTo(scaledVertex[0], scaledVertex[1]);
+                for (const vertex of this.walls) {
+                    scaledVertex = this.scaledWallVertex(vertex, scales);
+                    ctx.lineTo(scaledVertex[0], scaledVertex[1]);
+                }
+                ctx.closePath();
+                ctx.stroke();
+                ctx.restore();
+            },
+            beforeDraw(chart, args, options) {
+                const { ctx, scales } = chart;
+                if(this.walls.length==0) {
+                    return;
+                }
+                this.drawWalls(ctx, scales);
+            }
+        }
+
         const datalabels = {
             color: 'blue',
             font: {
@@ -55,25 +88,42 @@
                 scales: {
                     x: {
                         suggestedMin: 0,
-                        suggestedMax: 1500,
+                        suggestedMax: 2200,
                     },
                     y: {
                         suggestedMin: 0,
-                        suggestedMax: 1500,
+                        suggestedMax: 2000,
                     }
                 }
             },
-            plugins: [ChartDataLabels]
+            plugins: [ChartDataLabels, mapPlotter]
         };
         const pose_ctx = document.getElementById('poses').getContext('2d');
         let pose_chart = new Chart(pose_ctx, pose_chart_config);
+        
+        let awaiting_update = false;
+        function triggerChartUpdate()  {
+            awaiting_update = true;
+            setTimeout(() => {
+                awaiting_update = false;
+                pose_chart.update();
+            }, 0);
+        }
 
         mqttClient.subscribe('localisation/#')
         mqttClient.on('message', (topic, message) => {
             switch (topic) {
                 case 'localisation/poses':
+                    if (awaiting_update) {
+                        return;
+                    }
                     data.update_pose_data(message);
                     pose_chart.update();
+                    break;
+                case 'localisation/map':
+                    const payload = JSON.parse(message);
+                    mapPlotter.walls = payload.walls;
+                    triggerChartUpdate();
                     break;
             }
         });

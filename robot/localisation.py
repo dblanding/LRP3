@@ -4,26 +4,21 @@
 import numpy as np
 
 from common.mqtt_behavior import connect, publish_json
-# from common.poses import rotated_poses, translated_poses
+from common.poses import rotated_poses, translated_poses
 
-width = 1200
+width = 2100
 height = 1800
-cutout_left = 900
-cutout_top = 800
-# width = 1500
-# height = 1500
-# cutout_left = 1000
-# cutout_top = 500
-'''
+cutout = 760
+
 walls = [
     (0, height),
     (width, height),
-    (width, cutout_top),
-    (cutout_left, cutout_top),
-    (cutout_left, 0),
+    (width, cutout),
+    (width - cutout, cutout),
+    (width - cutout, 0),
     (0, 0)
 ]
-
+'''
 population_size = 20000
 rng = np.random.default_rng()
 low_probability = 10 ** -10
@@ -31,6 +26,8 @@ low_probability = 10 ** -10
 class Localisation:
     def __init__(self):
         self.poses = np.array([(500, 500, 0), (150, 100, np.pi / 3)])
+        self.poses = np.append(self.poses, rotated_poses(self.poses, np.pi/2) ,0)
+        self.poses = translated_poses(self.poses, 100)
         '''
         self.poses = np.column_stack((
             rng.uniform(0, width, population_size),
@@ -48,6 +45,7 @@ class Localisation:
         self.previous_left_distance = 0
         self.previous_right_distance = 0
         '''
+
     def publish_poses(self, client, poses):
         publish_json(client, "localisation/poses", poses.tolist())
 
@@ -83,12 +81,12 @@ class Localisation:
 
     def publish_poses(self, client, poses):
         publish_json(client, "localisation/poses", poses.tolist())
-
+    '''
     def publish_map(self, client):
         publish_json(client, "localisation/map", {
             "walls": walls
         })
-
+    '''
     def convert_encoders_to_motion(self, left_distance_delta, right_distance_delta):
         # Special case, straight line
         if left_distance_delta == right_distance_delta:
@@ -130,7 +128,7 @@ class Localisation:
         # Act
         publish_sample = self.resample_poses(weights, 100)
         self.publish_poses(client, publish_sample)
-    
+
     def start(self):
         client = connect()
         self.publish_map(client)
@@ -155,6 +153,7 @@ class Localisation:
     def start(self):
         client = connect()
         self.publish_poses(client, self.poses)
+        self.publish_map(client)
 
 service = Localisation()
 service.start()
