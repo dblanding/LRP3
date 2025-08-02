@@ -48,9 +48,6 @@ class Localisation:
         self.previous_right_distance = 0
         '''
 
-    def publish_poses(self, client, poses):
-        publish_json(client, "localisation/poses", poses.tolist())
-
     '''
 
     def in_boundary(self):
@@ -80,10 +77,10 @@ class Localisation:
         data = json.loads(message.payload)
         if 'robot/wheel_distance' in data:
             self.wheel_distance = data['robot/wheel_distance']
-
+    '''
     def publish_poses(self, client, poses):
         publish_json(client, "localisation/poses", poses.tolist())
-    '''
+
     def publish_map(self, client):
         publish_json(client, "localisation/map", {
             "walls": walls
