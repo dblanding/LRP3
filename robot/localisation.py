@@ -1,5 +1,5 @@
-# import ujson as json
-# import time
+import ujson as json
+import time
 
 import numpy as np
 
@@ -35,18 +35,17 @@ class Localisation:
             rng.uniform(0, height, population_size),
             rng.uniform(0, 2 * np.pi, population_size)
         ))
-        '''
+        
         self.wheel_distance = 0
 
-        self.alpha_trans_trans = 1.2/100
-        self.alpha_trans_rot = 0.5/100
-        self.alpha_rot_rot = 2/100
-        self.alpha_rot_trans = 0.1/100
+        # self.alpha_trans_trans = 1.2/100
+        # self.alpha_trans_rot = 0.5/100
+        # self.alpha_rot_rot = 2/100
+        # self.alpha_rot_trans = 0.1/100
 
         self.config_ready = False
         self.previous_left_distance = 0
         self.previous_right_distance = 0
-        '''
 
     '''
 
@@ -71,21 +70,21 @@ class Localisation:
             size=sample_count,
             p=normalised_weights
         )
-
+    '''
     def on_config_updated(self, client, userdata, message):
         self.config_ready = True
         data = json.loads(message.payload)
         if 'robot/wheel_distance' in data:
             self.wheel_distance = data['robot/wheel_distance']
-    '''
+
     def publish_poses(self, client, poses):
         publish_json(client, "localisation/poses", poses.tolist())
-
+    
     def publish_map(self, client):
         publish_json(client, "localisation/map", {
             "walls": walls
         })
-    '''
+
     def convert_encoders_to_motion(self, left_distance_delta, right_distance_delta):
         # Special case, straight line
         if left_distance_delta == right_distance_delta:
@@ -95,7 +94,7 @@ class Localisation:
         theta = (right_distance_delta - left_distance_delta) / self.wheel_distance
 
         return mid_distance, theta
-
+    '''
     def randomise_motion(self, translation, rotation):
         trans_scale = self.alpha_trans_trans * abs(translation) \
             + self.alpha_trans_rot * abs(rotation)
@@ -104,7 +103,7 @@ class Localisation:
         trans_samples = rng.normal(translation, trans_scale, population_size)
         rot_samples = rng.normal(rotation, rot_scale, population_size)
         return trans_samples, rot_samples
-
+    '''
     def move_poses(self, rotation, translation):
         self.poses = rotated_poses(self.poses, rotation)
         self.poses = translated_poses(self.poses, translation)
@@ -147,12 +146,13 @@ class Localisation:
         client.message_callback_add("sensors/encoders/data",
                                     self.on_encoders_data)
         while True:
+            self.publish_poses(client, self.poses)
             time.sleep(0.1)
     '''
     def start(self):
         client = connect()
         self.publish_poses(client, self.poses)
         self.publish_map(client)
-
+    '''
 service = Localisation()
 service.start()
