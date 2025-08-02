@@ -18,13 +18,14 @@ walls = [
     (width - cutout, 0),
     (0, 0)
 ]
-'''
-population_size = 20000
+
+population_size = 200
 rng = np.random.default_rng()
-low_probability = 10 ** -10
-'''
+# low_probability = 10 ** -10
+
 class Localisation:
     def __init__(self):
+        '''
         self.poses = np.array([(500, 500, 0), (150, 100, np.pi / 3)])
         self.poses = np.append(self.poses, rotated_poses(self.poses, np.pi/2) ,0)
         self.poses = translated_poses(self.poses, 100)
@@ -34,6 +35,7 @@ class Localisation:
             rng.uniform(0, height, population_size),
             rng.uniform(0, 2 * np.pi, population_size)
         ))
+        '''
         self.wheel_distance = 0
 
         self.alpha_trans_trans = 1.2/100
