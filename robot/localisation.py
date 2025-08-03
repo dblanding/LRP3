@@ -38,10 +38,10 @@ class Localisation:
         
         self.wheel_distance = 159
 
-        # self.alpha_trans_trans = 1.2/100
-        # self.alpha_trans_rot = 0.5/100
-        # self.alpha_rot_rot = 2/100
-        # self.alpha_rot_trans = 0.1/100
+        self.alpha_trans_trans = 1.2/100
+        self.alpha_trans_rot = 0.5/100
+        self.alpha_rot_rot = 2/100
+        self.alpha_rot_trans = 0.1/100
 
         self.config_ready = False
         self.previous_left_distance = 0
@@ -94,7 +94,7 @@ class Localisation:
         theta = (right_distance_delta - left_distance_delta) / self.wheel_distance
 
         return mid_distance, theta
-    '''
+
     def randomise_motion(self, translation, rotation):
         trans_scale = self.alpha_trans_trans * abs(translation) \
             + self.alpha_trans_rot * abs(rotation)
@@ -103,7 +103,7 @@ class Localisation:
         trans_samples = rng.normal(translation, trans_scale, population_size)
         rot_samples = rng.normal(rotation, rot_scale, population_size)
         return trans_samples, rot_samples
-    '''
+
     def move_poses(self, rotation, translation):
         self.poses = rotated_poses(self.poses, rotation)
         self.poses = translated_poses(self.poses, translation)
@@ -116,16 +116,16 @@ class Localisation:
         right_distance_delta = distance_data['right_distance'] - self.previous_right_distance
         self.previous_left_distance = distance_data['left_distance']
         self.previous_right_distance = distance_data['right_distance']
+
         # Think
         translation, theta = self.convert_encoders_to_motion(left_distance_delta, right_distance_delta)
         rotation = theta / 2
-        self.move_poses(rotation, translation)
-        '''
+        # self.move_poses(rotation, translation)
         trans_samples, rot_samples = self.randomise_motion(translation, rotation)
         self.move_poses(rot_samples, trans_samples)
-        weights = self.observational_model()
-        self.poses = self.resample_poses(weights, population_size)
-        '''
+        # weights = self.observational_model()
+        # self.poses = self.resample_poses(weights, population_size)
+
         # Act
         # publish_sample = self.resample_poses(weights, 100)
         self.publish_poses(client, self.poses)
