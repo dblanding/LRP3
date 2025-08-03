@@ -9,6 +9,9 @@ from common.poses import rotated_poses, translated_poses
 width = 2100
 height = 1800
 cutout = 760
+# define the dimensions used by the book so final example will work
+cutout_left = width - cutout
+cutout_top = cutout
 
 walls = [
     (0, height),
@@ -19,9 +22,9 @@ walls = [
     (0, 0)
 ]
 
-population_size = 200
+population_size = 2000
 rng = np.random.default_rng()
-# low_probability = 10 ** -10
+low_probability = 10 ** -10
 
 class Localisation:
     def __init__(self):
@@ -47,8 +50,6 @@ class Localisation:
         self.previous_left_distance = 0
         self.previous_right_distance = 0
 
-    '''
-
     def in_boundary(self):
         inside_walls = np.logical_and(
             np.logical_and(self.poses[:, 0] > 0, self.poses[:, 0] < width),
@@ -70,7 +71,7 @@ class Localisation:
             size=sample_count,
             p=normalised_weights
         )
-    '''
+
     def on_config_updated(self, client, userdata, message):
         self.config_ready = True
         data = json.loads(message.payload)
@@ -123,11 +124,11 @@ class Localisation:
         # self.move_poses(rotation, translation)
         trans_samples, rot_samples = self.randomise_motion(translation, rotation)
         self.move_poses(rot_samples, trans_samples)
-        # weights = self.observational_model()
-        # self.poses = self.resample_poses(weights, population_size)
+        weights = self.observational_model()
+        self.poses = self.resample_poses(weights, population_size)
 
         # Act
-        # publish_sample = self.resample_poses(weights, 100)
+        publish_sample = self.resample_poses(weights, 100)
         self.publish_poses(client, self.poses)
 
     def start(self):
