@@ -119,13 +119,16 @@ class Localisation:
         # Think
         translation, theta = self.convert_encoders_to_motion(left_distance_delta, right_distance_delta)
         rotation = theta / 2
+        self.move_poses(rotation, translation)
+        '''
         trans_samples, rot_samples = self.randomise_motion(translation, rotation)
         self.move_poses(rot_samples, trans_samples)
         weights = self.observational_model()
         self.poses = self.resample_poses(weights, population_size)
+        '''
         # Act
-        publish_sample = self.resample_poses(weights, 100)
-        self.publish_poses(client, publish_sample)
+        # publish_sample = self.resample_poses(weights, 100)
+        self.publish_poses(client, self.poses)
 
     def start(self):
         client = connect()
@@ -146,7 +149,6 @@ class Localisation:
         client.message_callback_add("sensors/encoders/data",
                                     self.on_encoders_data)
         while True:
-            self.publish_poses(client, self.poses)
             time.sleep(0.1)
     '''
     def start(self):
