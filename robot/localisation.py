@@ -36,7 +36,7 @@ class Localisation:
             rng.uniform(0, 2 * np.pi, population_size)
         ))
         
-        self.wheel_distance = 0
+        self.wheel_distance = 159
 
         # self.alpha_trans_trans = 1.2/100
         # self.alpha_trans_rot = 0.5/100
