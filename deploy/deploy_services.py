@@ -138,6 +138,13 @@ code = files.put(
 deploy_service("camera_view", "robot/camera_view.py",
                 False, common.changed or code.changed)
 
+code = files.put(
+    name="Update face detector code",
+    src="robot/face_detector.py",
+    dest="robot/face_detector.py")
+deploy_service("face_detector", "robot/face_detector.py",
+                False, common.changed or code.changed)
+
 files.directory(
     name="Create robot_control/libs",
     path="robot_control/libs"
