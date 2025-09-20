@@ -1,4 +1,3 @@
-from deploy import virtual_env
 from pyinfra.operations import apt, files, pip
 
 apt.packages(
@@ -8,12 +7,6 @@ apt.packages(
     no_recommends=True,
     _sudo=True,
 )
-
-pip.packages(
-    name="Install OpenCV contrib",
-    packages=["opencv-contrib-python"],
-    virtualenv=virtual_env.robot_venv,
-    )
 
 files.download(
     name="Download Face detection model",
