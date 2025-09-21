@@ -3,7 +3,7 @@ import cv2
 from common.camera_core import start, camera_app_url
 from common.mqtt_behavior import connect
 
-SIZE = (704, 480)
+SIZE = (640, 480)
 MIDDLE = (SIZE[0] // 2, SIZE[1] // 2)
 GREEN = (0, 255, 0)
 CROSS_SIZE = 10

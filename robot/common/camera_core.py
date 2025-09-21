@@ -15,9 +15,11 @@ def buffer_frame(frame):
     if frame_buffer.empty():
         frame_buffer.put(frame)
 
+
 def encode_frame(frame):
     _, jpeg = cv2.imencode(".jpg", frame, ENCODE_PARAM)
     return jpeg.tobytes()
+
 
 def frame_generator():
     while True:
@@ -27,6 +29,7 @@ def frame_generator():
         yield (b'--frame\r\n' +
                b'Content-Type: image/jpeg\r\n\r\n' + bytes + b'\r\n')
 
+
 @app.route("/")
 def stream():
     response = Response(
@@ -35,12 +38,14 @@ def stream():
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response
 
+
 def start_server_process():
     server = Process(target=app.run, kwargs={
         "host": "0.0.0.0",
         "port": 5001})
     server.start()
     return server
+
 
 def camera_app_url(client, userdata, message):
     publish_json(client, "camera_view/url", "http://raspi4.local:5001/")

@@ -1,4 +1,4 @@
-from pyinfra.operations import apt, files, pip
+from pyinfra.operations import apt, files
 
 apt.packages(
     name="Install AI packages",
