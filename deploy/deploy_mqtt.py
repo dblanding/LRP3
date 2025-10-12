@@ -19,6 +19,15 @@ if mosquitto_packages.changed:
         f"mosquitto_passwd -c -b /etc/mosquitto/passwd {mqtt_username} {mqtt_password}",
         _sudo=True)
 
+files.file(
+    name="Ensure mosquitto password file exists",
+    path="/etc/mosquitto/passwd",
+    present=True,
+    user="mosquitto",
+    group="mosquitto",
+    _sudo=True
+)
+
 mosquitto_files = files.put(
     name="Configure mosquitto",
     src="deploy/robot_mosquitto.conf",
