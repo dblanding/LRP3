@@ -1,11 +1,5 @@
 from deploy import virtual_env
-from pyinfra.operations import apt, pip, server
-
-apt.packages(
-    name = "pulseaudio",
-    packages = ["pulseaudio"],
-    _sudo = True
-)
+from pyinfra.operations import pip, server
 
 piper = pip.packages(
     name="Install piper TTS Python packages",
@@ -19,3 +13,11 @@ piper = pip.packages(
 
 if piper.changed:
     server.shell("robotpython -m piper.download_voices en_US-ryan-low")
+
+pip.packages(
+    name="Install vosk recognition",
+    packages=[
+        "vosk",
+    ],
+    virtual_env=virtual_env.robot_venv
+)
