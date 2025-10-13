@@ -19,5 +19,5 @@ pip.packages(
     packages=[
         "vosk",
     ],
-    virtual_env=virtual_env.robot_venv
+    virtualenv=virtual_env.robot_venv
 )
