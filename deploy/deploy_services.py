@@ -146,6 +146,13 @@ deploy_service("face_detector", "robot/face_detector.py",
                 False, common.changed or code.changed)
 
 code = files.put(
+    name="Update look at face behavior code",
+    src="robot/look_at_face.py",
+    dest="robot/look_at_face.py")
+deploy_service("look_at_face", "robot/look_at_face.py",
+                False, common.changed or code.changed)
+
+code = files.put(
     name="Update line detector code",
     src="robot/line_detector.py",
     dest="robot/line_detector.py")

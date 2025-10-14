@@ -3,6 +3,8 @@
 {% block content %}
     <button id="start">Start</button>
     <button id="stop">Stop</button>
+    <button id="start_look_at">Start looking at face</button>
+    <button id="stop_look_at">Stop looking at face</button>
 
     <div id="camera_view"></div>
 
@@ -12,6 +14,8 @@
         let mqttClient = connect();
         publish_when_clicked(mqttClient, "start", "launcher/start", "face_detector");
         publish_when_clicked(mqttClient, "stop", "launcher/stop", "face_detector");
+        publish_when_clicked(mqttClient, "start_look_at", "launcher/start", "look_at_face");
+        publish_when_clicked(mqttClient, "stop_look_at", "launcher/stop", "look_at_face");
 
         const camera_view = document.getElementById('camera_view');
 
