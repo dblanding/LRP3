@@ -16,7 +16,13 @@ class VoiceAgent:
 
         self.utterances = {
             "start tracking faces": self.start_tracking_faces,
+            "start face tracking": self.start_tracking_faces,
+            "track faces": self.start_tracking_faces,
             "stop tracking faces": self.stop_tracking_faces,
+            "stop face tracking": self.stop_tracking_faces,
+            "start following lines": self.start_following_lines,
+            "follow lines": self.start_following_lines,
+            "stop following lines": self.stop_following_lines,
         }
 
         full_vocabulary = list(self.utterances.keys()) + [wake_word, unknown]
@@ -66,6 +72,16 @@ class VoiceAgent:
         self.client.publish("launcher/stop", "face_detector")
         self.client.publish("launcher/stop", "look_at_face")
         speak("I'm no longer looking at faces.")
+
+    def start_following_lines(self):
+        self.client.publish("launcher/start", "line_detector")
+        self.client.publish("launcher/start", "line_follower")
+        speak("I'm now following lines!")
+
+    def stop_following_lines(self):
+        self.client.publish("launcher/stop", "line_follower")
+        self.client.publish("launcher/stop", "line_detector")
+        speak("I'm no longer following lines.")
 
 behavior = VoiceAgent()
 behavior.start()
