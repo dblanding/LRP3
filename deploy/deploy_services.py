@@ -164,6 +164,13 @@ deploy_service("colored_object_detector",
                 False, common.changed or code.changed)
 
 code = files.put(
+    name="Update object follower behavior code",
+    src="robot/object_follower.py",
+    dest="robot/object_follower.py")
+deploy_service("object_follower", "robot/object_follower.py",
+               False, common.changed or code.changed)
+
+code = files.put(
     name="Update line detector code",
     src="robot/line_detector.py",
     dest="robot/line_detector.py")

@@ -2,8 +2,8 @@ import numpy as np
 
 
 class PIDController:
-    def __init__(self, proportional_constant, integral_constant=0, derivative_constant=0, smart_reset=False,
-                 windup_limit=None):
+    def __init__(self, proportional_constant, integral_constant=0,
+                 derivative_constant=0, smart_reset=False, windup_limit=None):
         self.proportional_constant = proportional_constant
         self.integral_constant = integral_constant
         self.integral = 0
