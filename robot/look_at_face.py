@@ -18,7 +18,7 @@ class LookAtFaceBehavior:
         self.face_y = center_y
 
     def look_at_face(self, client):
-        pan_pid = PIDController(0, 0.006)
+        pan_pid = PIDController(0, -0.006)  # Inverted pan
         tilt_pid = PIDController(0, -0.006)  # Inverted tilt
         while True:
             # Think
