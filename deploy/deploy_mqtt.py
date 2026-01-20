@@ -1,3 +1,4 @@
+import json
 from pyinfra.operations import \
     apt, systemd, server, files
 
@@ -11,14 +12,28 @@ mosquitto_packages = apt.packages(
     ],
     present=True, _sudo=True)
 
-mqtt_username = "robot"
-mqtt_password = "robot"
-if mosquitto_packages.changed:
+# Load MQTT credentials from .env.json
+with open('.env.json') as f:
+    env_config = json.load(f)
+
+mqtt_username = env_config["MQTT_USERNAME"]
+mqtt_password = env_config["MQTT_PASSWORD"]
+
+# Deploy env file to track changes
+env_file = files.put(
+    name="Deploy MQTT environment config",
+    src=".env.json",
+    dest="/etc/mosquitto/.env.json",
+    _sudo=True
+)
+
+if mosquitto_packages.changed or env_file.changed:
     # set mosquitto password
     server.shell(
         f"mosquitto_passwd -c -b /etc/mosquitto/passwd {mqtt_username} {mqtt_password}",
         _sudo=True)
 
+""" This block is superfluous w/r/t/ Ch18-complete repo
 files.file(
     name="Ensure mosquitto password file exists",
     path="/etc/mosquitto/passwd",
@@ -27,6 +42,7 @@ files.file(
     group="mosquitto",
     _sudo=True
 )
+"""
 
 mosquitto_files = files.put(
     name="Configure mosquitto",
@@ -35,7 +51,7 @@ mosquitto_files = files.put(
     _sudo=True
 )
 
-if mosquitto_packages.changed or mosquitto_files.changed:
+if mosquitto_packages.changed or mosquitto_files.changed or env_file.changed:
     # restart mosquitto
     systemd.service(
         name="Restart/enable mosquitto",
