@@ -11,7 +11,7 @@ pages_folder = files.directory(
 
 env_config = files.put(
     name="Deploy environment configuration",
-    src=".env.json",
+    src="robot_control/.env.json",
     dest="robot_control/.env.json"
     )
 
