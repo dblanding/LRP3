@@ -13,7 +13,7 @@ mosquitto_packages = apt.packages(
     present=True, _sudo=True)
 
 # Load MQTT credentials from .env.json
-with open('.env.json') as f:
+with open('robot_control/.env.json') as f:
     env_config = json.load(f)
 
 mqtt_username = env_config["MQTT_USERNAME"]
