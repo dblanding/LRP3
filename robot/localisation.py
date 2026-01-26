@@ -1,5 +1,6 @@
 import numpy as np
 
+from common import arena
 from common.mqtt_behavior import connect, publish_json
 from common.poses import Poses
 
@@ -15,8 +16,8 @@ class Localisation:
     
     def start(self):
         client = connect()
+        arena.publish_map(client)
         self.publish_poses(client, self.poses)
-        client.loop_stop()
 
 
 service = Localisation()
