@@ -9,6 +9,14 @@ class Poses(np.ndarray):
     def __new__(cls, input_array):
         return np.asarray(input_array, dtype=cls.Pose).view(cls)
 
+    @classmethod
+    def generate(cls, count, x_range, y_range, theta_range) -> 'Poses':
+        poses = np.empty((count,), dtype=cls.Pose)
+        poses['x'] = rng.uniform(x_range[0], x_range[1], count)
+        poses['y'] = rng.uniform(y_range[0], y_range[1], count)
+        poses['theta'] = rng.uniform(theta_range[0], theta_range[1], count)
+        return poses.view(cls)
+
     def rotate(self, rotation) -> 'Poses':
         result = self.copy()
         result['theta'] += rotation
@@ -23,10 +31,6 @@ class Poses(np.ndarray):
         result['y'] += np.sin(self['theta']) * length
         return result
 
-    @classmethod
-    def generate(cls, count, x_range, y_range, theta_range) -> 'Poses':
-        poses = np.empty((count,), dtype=cls.Pose)
-        poses['x'] = rng.uniform(x_range[0], x_range[1], count)
-        poses['y'] = rng.uniform(y_range[0], y_range[1], count)
-        poses['theta'] = rng.uniform(theta_range[0], theta_range[1], count)
-        return poses.view(cls)
+    def move(self, rotation, translation) -> 'Poses':
+        return self.rotate(rotation).translate(translation).rotate(rotation)
+
