@@ -3,9 +3,15 @@ from common.mqtt_behavior import publish_json
 width = 2100
 height = 1800
 cutout = 760
-# define the dimensions used by the book so final example will work
+
+# The dimensions in this section are defined so other code will work
+left = 0
+bottom = 0
+right = width
+top = height
 cutout_left = width - cutout
 cutout_top = cutout
+# end of dimensions section
 
 walls = [
     (0, height),
