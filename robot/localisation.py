@@ -7,6 +7,8 @@ from common.mqtt_behavior import connect, publish_json
 from common.poses import Poses
 
 population_size = 200
+rng = np.random.default_rng()
+
 
 class Localisation:
     def __init__(self):
@@ -15,6 +17,11 @@ class Localisation:
         self.wheel_distance = 159
         self.previous_left_distance = 0
         self.previous_right_distance = 0
+
+        self.trans_noise_from_trans = 0.2/100
+        self.trans_noise_from_rot = 0.1/100
+        self.rot_noise_from_rot = 0.2/100
+        self.rot_noise_from_trans = 0.01/100
 
     def convert_encoders_to_motion(self, left_distance_delta, right_distance_delta):
         # Special case, straight line
@@ -25,6 +32,17 @@ class Localisation:
         theta = (right_distance_delta - left_distance_delta) / self.wheel_distance
 
         return mid_distance, theta
+
+    def randomise_motion(self, translation, rotation):
+        trans_scale = self.trans_noise_from_trans * abs(translation) \
+            + self.trans_noise_from_rot * abs(rotation)
+        rot_scale = self.rot_noise_from_rot * abs(rotation) \
+            + self.rot_noise_from_trans * abs(translation)
+
+        trans_samples = rng.normal(translation, trans_scale, population_size)
+        rot_samples = rng.normal(rotation, rot_scale, population_size)
+
+        return trans_samples, rot_samples
 
     def on_encoders_data(self, client, userdata, msg):
         # Sense
@@ -40,7 +58,8 @@ class Localisation:
         translation, theta = self.convert_encoders_to_motion(
             left_distance_delta, right_distance_delta)
         rotation = theta / 2
-        self.poses = self.poses.move(rotation, translation)
+        trans_samples, rot_samples = self.randomise_motion(translation, rotation)
+        self.poses = self.poses.move(rot_samples, trans_samples)
 
         # Act
         self.publish_poses(client, self.poses)
