@@ -5,8 +5,10 @@ import time
 from common import arena
 from common.mqtt_behavior import connect, publish_json
 from common.poses import Poses
+from boundary_observation_model import BoundaryObservationModel
 
-population_size = 200
+# use 2000 to get things working, then 20_000 to improve the pool of predictions
+population_size = 2000
 rng = np.random.default_rng()
 
 
@@ -22,6 +24,11 @@ class Localisation:
         self.trans_noise_from_rot = 0.1/100
         self.rot_noise_from_rot = 0.2/100
         self.rot_noise_from_trans = 0.01/100
+
+        self.boundary_model = BoundaryObservationModel()
+
+    def apply_observational_models(self):
+        return self.boundary_model.calculate_weights(self.poses)
 
     def convert_encoders_to_motion(self, left_distance_delta, right_distance_delta):
         # Special case, straight line
@@ -60,9 +67,12 @@ class Localisation:
         rotation = theta / 2
         trans_samples, rot_samples = self.randomise_motion(translation, rotation)
         self.poses = self.poses.move(rot_samples, trans_samples)
+        weights = self.apply_observational_models()
 
         # Act
-        self.publish_poses(client, self.poses)
+        publish_sample = self.poses.resample(weights, 200)
+        self.poses = self.poses.resample(weights, population_size)
+        self.publish_poses(client, publish_sample)
 
     def publish_poses(self, client, poses):
         publish_json(client, "localisation/poses", poses.tolist())

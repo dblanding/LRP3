@@ -4,7 +4,7 @@ width = 2100
 height = 1800
 cutout = 760
 
-# The dimensions in this section are defined so other code will work
+# dimensions section (used by other code)
 left = 0
 bottom = 0
 right = width

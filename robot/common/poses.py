@@ -34,3 +34,30 @@ class Poses(np.ndarray):
     def move(self, rotation, translation) -> 'Poses':
         return self.rotate(rotation).translate(translation).rotate(rotation)
 
+    def resample(self, weights, sample_count) -> 'Poses':
+        """Low variance resampling algorithm (systematic resampling).
+
+        This ensures better representation of the particle distribution
+        by using deterministic spacing with a single random offset.
+
+        Args:
+            weights: Weight for each pose
+            sample_count: Number of poses to return
+
+        Returns:
+            Resampled poses array
+        """
+        cumulative_sum = np.cumsum(weights)
+        total_weight = cumulative_sum[-1]
+        interval = total_weight / sample_count
+
+        # Single random start point in [0, interval)
+        start = rng.uniform(0, interval)
+
+        # Generate systematic sample points
+        sample_points = start + np.arange(sample_count) * interval
+
+        # Find indices using searchsorted (efficient binary search)
+        indices = np.searchsorted(cumulative_sum, sample_points)
+
+        return self[indices]
